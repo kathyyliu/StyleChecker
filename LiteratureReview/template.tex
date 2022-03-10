@@ -1,0 +1,80 @@
+\documentclass[10pt,twocolumn]{article} 
+
+\usepackage{oxycomps} % use the main oxycomps style file
+
+\bibliography{references}
+
+\pdfinfo{
+    /Title (Python Style Checker to Teach Code Style Literature Review)
+    /Author (Kathy Liu)
+}
+
+\title{Python Style Checker to Teach Code Style Literature Review}
+
+\author{Kathy Liu}
+\affiliation{Occidental College}
+\email{kliu4@oxy.edu}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem Context}
+Code style is often thought of as adherence to syntactic coding standards for a language, such as use of whitespace, line length, formatting, and more. 
+However, the importance of code style is much more than mere aesthetics, as it also extends to "code smells" that signal a deeper need to refactor, such as dead or repeated code. 
+Thus, code style is at the heart of human readable, quality code and is an essential skill for programmers. 
+For novice programmers that are still learning correct logic and have yet to build context to understand the nuances of the programs they write, grasping a sense for code style can feel overabstract. 
+Building the habit of coding with good style early on helps students break out of the mindset that code that merely produces the expected output is good enough more easily than relearning style later on.
+
+Just as a deeper sense for style can be hard to grasp and teach, style is also difficult to grade. 
+In computer science courses at the undergraduate level, it is standard for coding assignments to be put through a test suite for correctness, then given to Teaching Assistants and human graders to evaluate on style. 
+These human graders must be trained, paid for their work, and also often create a bottleneck for assignment turnaround time. 
+
+A simple solution is using automatic graders that handle style. 
+Prior work shows humans graders are inconsistent between each other and also compared to automatic graders, which can be considered to uphold the style grading criteria exactly. 
+Humans can accidentally miss violations of a style guideline, whereas automatic inspections are perfectly consistent \cite{perretta_2019}. 
+Another study looking style in the context of code reviews found that patch authors rarely repeat automatically detected issues, and more frequently repeat manually detected issues in their future patch submissions. 
+This implies that manual review by a human is still necessary, at least at the complexity of production-level code. 
+However, it should be noted that using an automatic checker allows fewer well-trained human graders to focus on evaluating aspects that cannot yet be automatically evaluated clearly \cite{ueda_2018}.
+
+Therefore, this project will implement an efficient style checker that utilizes autonomous checking to streamline the grading process for manual graders.  
+
+
+\section{Technical Background}
+\subsection{Pylint}
+In order to check style, each file in a submission must be parsed by a parser and evaluated based on predefined style criteria. 
+This project will use Pylint as a starting point for the checking functionalities of the web app. 
+Pylint is a opensource, general tool for linting Python, but is also often used in CS classrooms to grade student code. 
+Pylint may be an appealing tool for instructors and graders because of its good at enforcing generally accepted Python convention, provides recommendations for improving code, is available for students to use on their local machines before submitting, and outputs an overall score out of 10 convenient for grading. 
+
+But as Pylint is general-purpose, it is not perfectly suited for the task of teaching nor grading style. 
+In one study comparing student submissions graded by human instructors following predefined rubrics and submissions graded by Pylint, Pylint scores were lower than those provided by instructors \cite{dasgupta_2017}. 
+Additionally, although Pylint is a widely used tool in the Python community, some users dislike that it flags too many unuseful warnings among the feedback. 
+As the documentation comments, Pylint “may warn you about things that you have conscientiously done,” and “may be too verbose with warnings” \cite{pylint_documentation_2022}.
+
+Part of the implementation of this project will include building either a plugin or wrapper around Pylint that makes improves user experience for teachers and students that only want to use a specific subset of Pylint's checking and hinting capabilities appropriate for the level of the course, compared to using a config file on Pylint directly. 
+
+\subsection{Web Stack}
+This project will use React.js for the frontend, Express.js and Node.js for backend, and MySQL for its database. 
+This combination of web frameworks is popular for dynamic web applications, which will be utilized in the educational component of this project to better tailor the user interface for a specific students' needs. 
+MySQL was also chosen rather than non-relational databases like MongoDB to capture the complex nature of the entities invovled. 
+For example, one student may be a part of many courses and have many submissions for each assignment, with each submission receiving exactly one grade.
+
+
+\section{Prior Work}
+Other tools that aim to teach coding style include AutoStyle, a style tutor that offers adaptive, real-time style feedback and hints \cite{moghadam_2015}. 
+When compared to a tutor that only offered the end score of a submission’s style, both helped students improve the style of their code, but students were shown to improve their recognition of good style only with AutoStyle. 
+However, students still struggled to implement style improvements even with the specific recommendations \cite{wiese_2017}. 
+Additionally, AutoStyle’s generated hints require a large corpus of several hundred previous submissions in order to capture variations in style between submissions. 
+Thus, AutoStyle may not be appropriate for new or smaller classes without such a large corpus on-hand. 
+In contrast, this application aims to be ready out-of-the-box, for teachers to use.
+
+Another approach to help student discern good and bad style is the software Ugly Code.
+Ugly Code's approach to illustrating style is presenting students with good code, then transforming its style to be ugly in various specified dimensions \cite{mcmaster_2013}. 
+In this way, Ugly Code aims to deepen students' understanding of style by expanding their exposure to style in novel ways. 
+Unlike Ugly Code, this project will adhere to the convention of teaching style through correcting bad code to be good. 
+But, it is similar to Ugly Code in that it exposes students to novel style approaches by having to correct their peer's submission. 
+
+\printbibliography 
+
+\end{document}
