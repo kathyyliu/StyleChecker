@@ -85,6 +85,30 @@ In this way, Ugly Code aims to deepen students' understanding of style by expand
 Unlike Ugly Code, this project will adhere to the convention of teaching style through correcting bad code to be good. 
 But, it is similar to Ugly Code in that it exposes students to novel style approaches by having to correct their peer's submission. 
 
+\section{Methods}
+In order to inform the needs of my target audience, I will conduct a series of user interviews. First, I will gather participants that are professors teaching undergraduate-level CS courses at Occidental College with a goal of n >= 5. Then, I will schedule a 30 minute video conference with them in order to collect their opinions on a series of 9 questions that cover the theoretical role of code style, teaching style, and grading style (fig. 2). In the questions related to the specific courses they teach, participants will be asked to speak about the most recent semester that they taught at least one course where students were required to code. After conducting all of the interviews, I will analyze the transcripts of our conversations for common themes. In particular, questions 5 and 9 will be very useful in determining the specific features of the final web app. Several of the other questions will also reveal the context in which this web app would be used.
+
+\begin{figure}
+\begin{lstlisting}
+1. How would you define good code style?
+2. What role, if any, does code style play for students in each of your courses?
+3. What is your approach to teaching code style in your classes and why do you use it?
+4. Have you used any other approaches or products in the past to teach style? If so, what did you think of each approach or why not?
+5. If someone were to create your ideal product to teach style, what functionality would you expect it to have?
+6. Please give me a general description of the assignments you give to your students in each of your courses.
+7. What is your approach to grading code style in your classes and why do you use it?
+8. Have you used any other approaches or products in the past to grade style? If so, what did you think of each approach or why not?
+9. If someone were to create your ideal product to grade style, what functionality would you expect it to have?
+\end{lstlisting}
+	\centering
+	\caption{didn't have time to figure out this formatting}
+\end{figure}
+
+On the student side, I will use Pylint to detect the logical and stylistic errors in their code. In order to turn each of the students’ errors into opportunities to learn style, I will use Plerr, a curated list that correlates Pylint error codes with reasoning and examples of erroneous and correct code \cite{plerr}. With the combination of Pylint, Plerr, and a intuitive UI, I will build a platform for students to check the code style of their assignments, learn why their style was incorrect, and develop their own internal sense of code style beyond that assignment. 
+
+\section{Evaluation}
+In order to evaluate this project, I will return to the user interview participants to evaluate their experience using the product. In particular, I would want to ask how likely they would be to use this web app in place of their current code style teaching or grading system. It would also be important to test the usability of the product as participants interact with it. Similar to the evaluative methods of \cite{moghadam_2015} for their style grading product, it could also be interesting to compare the grade outputted by my product compared to past assignments graded by teacher’s assistants. To evaluate the student experience using and learning from the product, I could also conduct surveys or interviews that would also measure usability, as well as how effective the product is at explaining and teaching style. 
+
 \printbibliography 
 
 \end{document}
