@@ -44,15 +44,25 @@ Therefore, this project will implement an efficient style checker that utilizes 
 \subsection{Pylint}
 In order to check style, each file in a submission must be parsed by a parser and evaluated based on predefined style criteria. 
 This project will use Pylint as a starting point for the checking functionalities of the web app. 
-Pylint is a opensource, general tool for linting Python, but is also often used in CS classrooms to grade student code. 
-Pylint may be an appealing tool for instructors and graders because of its good at enforcing generally accepted Python convention, provides recommendations for improving code, is available for students to use on their local machines before submitting, and outputs an overall score out of 10 convenient for grading. 
+Pylint is an open source, general linter for Python, but is also often used in CS classrooms to grade student code. 
+Pylint already has many features out-of-the-box that make it an appealing tool for instructors and graders: its good at enforcing generally accepted Python convention, provides recommendations for improving code, is available for students to use on their local machines before submitting, and outputs an overall score out of 10 convenient for grading. Additionally, I chose to use Pylint as the foundation for this project because unlike other linters for Python, it checks for stylistic compliance instead of just logical errors, and is one of the most critical linters. 
 
 But as Pylint is general-purpose, it is not perfectly suited for the task of teaching nor grading style. 
-In one study comparing student submissions graded by human instructors following predefined rubrics and submissions graded by Pylint, Pylint scores were lower than those provided by instructors \cite{dasgupta_2017}. 
-Additionally, although Pylint is a widely used tool in the Python community, some users dislike that it flags too many unuseful warnings among the feedback. 
+For grading, student submissions graded by human instructors following predefined rubrics and submissions graded by Pylint, Pylint scores have been found to be lower than those provided by instructors \cite{dasgupta_2017}. 
+Pylint is also not a suitable tool for a student to learn why their code is in poor style because feedback given by Pylint are brief and not meant to be explanatory (fig. 1). 
+Furthermore, although Pylint is a widely used tool in the Python community, some users dislike that it flags too many unuseful warnings among the feedback. 
 As the documentation comments, Pylint “may warn you about things that you have conscientiously done,” and “may be too verbose with warnings” \cite{pylint_documentation_2022}.
 
 Part of the implementation of this project will include building either a plugin or wrapper around Pylint that makes improves user experience for teachers and students that only want to use a specific subset of Pylint's checking and hinting capabilities appropriate for the level of the course, compared to using a config file on Pylint directly. 
+
+% something weirds going on with this formatting
+\begin{figure}
+\begin{lstlisting}
+pylint_example.py 15: Line too long (120/100) (line-too-long)
+\end{lstlisting}
+	\centering
+	\caption{A typical error message from Pylint.}
+\end{figure}
 
 \subsection{Web Stack}
 This project will use React.js for the frontend, Express.js and Node.js for backend, and MySQL for its database. 
