@@ -1,0 +1,147 @@
+\documentclass[10pt,twocolumn]{article} 
+
+\usepackage{oxycomps} % use the main oxycomps style file
+
+\bibliography{references}
+
+\pdfinfo{
+    /Title (Python Style Checker to Teach Code Style)
+    /Author (Kathy Liu)
+}
+
+\title{Python Style Checker to Teach Code Style}
+
+\author{Kathy Liu}
+\affiliation{Occidental College}
+\email{kliu4@oxy.edu}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem Context}
+Code style is often thought of as adherence to syntactic coding standards for a language, such as use of whitespace, line length, formatting, and more. 
+However, the importance of code style is much more than mere aesthetics, as it also extends to "code smells" that signal a deeper need to refactor, such as dead or repeated code. 
+Thus, code style is at the heart of human readable, quality code and is an essential skill for programmers. 
+For novice programmers that are still learning correct logic and have yet to build context to understand the nuances of the programs they write, grasping a sense for code style can feel overabstract. 
+Building the habit of coding with good style early on helps students break out of the mindset that code that merely produces the expected output is good enough more easily than relearning style later on.
+
+Just as a deeper sense for style can be hard to grasp and teach, style is also difficult to grade. 
+In computer science courses at the undergraduate level, it is standard for coding assignments to be put through a test suite for correctness, then given to Teaching Assistants and human graders to evaluate on style. 
+These human graders must be trained, paid for their work, and also often create a bottleneck for assignment turnaround time. 
+
+A simple solution is using automatic graders that handle style. 
+Prior work shows humans graders are inconsistent between each other and also compared to automatic graders, which can be considered to uphold the style grading criteria exactly. 
+Humans can accidentally miss violations of a style guideline, whereas automatic inspections are perfectly consistent \cite{perretta_2019}. 
+Another study looking style in the context of code reviews found that patch authors rarely repeat automatically detected issues, and more frequently repeat manually detected issues in their future patch submissions. 
+This implies that manual review by a human is still necessary, at least at the complexity of production-level code. 
+However, it should be noted that using an automatic checker allows fewer well-trained human graders to focus on evaluating aspects that cannot yet be automatically evaluated clearly \cite{ueda_2018}.
+
+Therefore, this project will implement an efficient style checker that utilizes autonomous checking to streamline the grading process for manual graders.  
+
+
+\section{Technical Background}
+\subsection{Pylint}
+In order to check style, each file in a submission must be parsed by a parser and evaluated based on predefined style criteria. 
+This project will use Pylint as a starting point for the checking functionalities of the web app. 
+Pylint is an open source, general linter for Python, but is also often used in CS classrooms to grade student code. 
+Pylint already has many features out-of-the-box that make it an appealing tool for instructors and graders: its good at enforcing generally accepted Python convention, provides recommendations for improving code, is available for students to use on their local machines before submitting, and outputs an overall score out of 10 convenient for grading. Additionally, I chose to use Pylint as the foundation for this project because unlike other linters for Python, it checks for stylistic compliance instead of just logical errors, and is one of the most critical linters. 
+
+But as Pylint is general-purpose, it is not perfectly suited for the task of teaching nor grading style. 
+For grading, student submissions graded by human instructors following predefined rubrics and submissions graded by Pylint, Pylint scores have been found to be lower than those provided by instructors \cite{dasgupta_2017}. 
+Pylint is also not a suitable tool for a student to learn why their code is in poor style because feedback given by Pylint are brief and not meant to be explanatory (fig. 1). 
+Furthermore, although Pylint is a widely used tool in the Python community, some users dislike that it flags too many unuseful warnings among the feedback. 
+As the documentation comments, Pylint “may warn you about things that you have conscientiously done,” and “may be too verbose with warnings” \cite{pylint_documentation_2022}.
+
+Part of the implementation of this project will include building either a plugin or wrapper around Pylint that makes improves user experience for teachers and students that only want to use a specific subset of Pylint's checking and hinting capabilities appropriate for the level of the course, compared to using a config file on Pylint directly. 
+
+\begin{figure}
+\vspace{7 mm}
+\begin{lstlisting}
+pylint_example.py 15: Line too long (120/100) (line-too-long)
+\end{lstlisting}
+\vspace{7 mm}
+	\centering
+	\caption{A typical error message from Pylint.}
+\end{figure}
+
+
+\subsection{Web Stack}
+This project will use React.js for the frontend, Express.js and Node.js for backend, and MySQL for its database. 
+This combination of web frameworks is popular for dynamic web applications, which will be utilized in the educational component of this project to better tailor the user interface for a specific students' needs. 
+MySQL was also chosen rather than non-relational databases like MongoDB to capture the complex nature of the entities invovled. 
+For example, one student may be a part of many courses and have many submissions for each assignment, with each submission receiving exactly one grade.
+
+
+\section{Prior Work}
+There are plenty of linters available to style check all of the popular programming languages. Other than Pylint, Pyflakes and Flake8 are also well-known linters for Python, while Checkstyle for Java, Linter for Scala, and ESLint for Javascript are some examples of linters for other languages. There have also been code-style-specific teaching materials created for CS classrooms, but most are in the form of exercise books. The existing applications that aim to teach code style also tend to require a significant corpus of similar \cite{moghadam_2015} or verifiable bad code  \cite{mcmaster_2013}. Additionally, students still struggled to implement style improvements even with the specific recommendations from these applications \cite{wiese_2017}. I am not considering style guides as teaching material, because not all of them are explanatory, and the explanations that do exist are not usually written for an audience with less programming experience. Thus, this project is unique because it explicitly aims to combine the functions of teaching and grading code style into one product in a manner that is user-friendly to both teachers and students.
+
+\section{Methods}
+In order to inform the needs of my target audience, I will conduct a series of user interviews. First, I will gather participants that are professors teaching undergraduate-level CS courses at Occidental College with a goal of n >= 5. Then, I will schedule a 30 minute video conference with them in order to collect their opinions on a series of 9 questions that cover the theoretical role of code style, teaching style, and grading style (fig. 3). In the questions related to the specific courses they teach, participants will be asked to speak about the most recent semester that they taught at least one course where students were required to code. After conducting all of the interviews, I will analyze the transcripts of our conversations for common themes. In particular, questions 5 and 9 will be very useful in determining the specific features of the final web app. Several of the other questions will also reveal the context in which this web app would be used.
+
+\begin{figure}
+\begin{lstlisting}
+1. How would you define good code style?
+2. What role, if any, does code style play for students in each of your courses?
+3. What is your approach to teaching code style in your classes and why do you use it?
+4. Have you used any other approaches or products in the past to teach style? If so, what did you think of each approach or why not?
+5. If someone were to create your ideal product to teach style, what functionality would you expect it to have?
+6. Please give me a general description of the assignments you give to your students in each of your courses.
+7. What is your approach to grading code style in your classes and why do you use it?
+8. Have you used any other approaches or products in the past to grade style? If so, what did you think of each approach or why not?
+9. If someone were to create your ideal product to grade style, what functionality would you expect it to have?
+\end{lstlisting}
+    \vspace{7 mm}
+	\centering
+	\caption{Interview guide used on participants}
+\end{figure}
+
+On the student side, I will use Pylint to detect the logical and stylistic errors in their code. In order to turn each of the students’ errors into opportunities to learn style, I will use Plerr, a curated list that correlates Pylint error codes with reasoning and examples of erroneous and correct code \cite{plerr}. With the combination of Pylint, Plerr, and a intuitive UI, I will build a platform for students to check the code style of their assignments, learn why their style was incorrect, and develop their own internal sense of code style beyond a single assignment or course.
+
+I will also practice the Agile methodology in the development of this project. Thus, I will run 3 week sprints from the start of June to December, with the goal of delivering a working product at the end of each sprint. I will then test the product to inform the goals of future sprints. These tests may just be in the form of myself interacting with the web app, but could occasionally be one of the forms described in Evaluation Metrics. For instance, I may return to the participants from the initial user interviews to get their opinion on an intermediate version of the product. This also follows Agile's emphasis on continuous visibility, where users are a part of the development process, not just at the end. 
+
+\section{Evaluation Metrics}
+In order to evaluate this project, I will return to the user interview participants to evaluate their experience using the product. In particular, I would want to ask how likely they would be to use this web app in place of their current code style teaching or grading system. It would also be important to test the usability of the product as participants interact with it. Similar to the evaluative methods of \cite{moghadam_2015} for their style grading product, it could also be interesting to compare the grade outputted by my product compared to past assignments graded by teacher’s assistants. User interviews showed that many professors use human graders to grade coding assignments for style, so being able to mimic the abilities of human graders would be an important benchmark. To evaluate the student experience using and learning from the product, I could also conduct surveys or interviews that would also measure usability, as well as how effective the product is at explaining and teaching style. Evaluation of the teaching component of this project may be most feasible in qualitative or interview-related means.
+
+\section{Ethical Considerations}
+As with all Educational technology, or Edtech, assumptions or ideologies of how education could or should operate are inevitably coded into the digital products, that schools then become dependent on \cite{williamson_2017}. By using these products, educational institutions and individual teachers are giving up some freedom in organizing their classes. Without proper precaution, this product may cause convergence of some aspects of Computer Science education into hegemonic or otherwise fixed conceptions of the classroom. Related, there is also the problem of blind or over-reliance on the grading aspect of this product. For example, even if this product was made with the intention to be used in conjunction with a human grader, some graders may be tempted to construe the checker's output as ground-truth. There are also concerns regarding accessibility. Firstly, to successfully use this product, teachers and students will need internet access, a compatible device, and possess digital literacy at a minimum. Access to all three of these requirements are also tied to one’s socioeconomic status. Students of low socioeconomic status are already widely regarded as educationally disadvantaged \cite{walpole_2003}. Additionally, the reach of this product will likely only be contained within Occidental College, a private school in a developed country. Thus in application, the benefits of this product that make it seem appealing would likely be most accessible to those that are already educationally privileged. This issue of access is an even more prominent issue with this project than other technology because education itself is a tool for determining or changing one's socioeconomic status, especially higher education. Finally, depending on how much data this project collects from its users, data privacy and surveillance could potentially be a large ethical concern. 
+
+\section{Timeline}
+As part of the Agile method, my proposed timeline will be split into 8 3-week iterations, spanning from June to November (fig. 3). All of summer will be spent focused on creating a minimum viable product that contains the core functionality of this project. This intermediate product will include a student-facing web page that can run Pylint on a Python file and display the corresponding Plerr example, and a teacher-facing page that has multiple preset options for configuring the style checker. The UI will be very simple, and the student and teacher components may or may not be connected at this stage. After this very basic version is achieved, each iteration afterward will focus on adding more features and improving the UI. At this point, it will be sometime in the fall, so I will also be able to reach out to teachers and students as part of continuous evaluation. Specific features and their priorities were determined using findings from the user interviews. It should also be noted that part of the Agile method is to be flexible instead of focusing on planning. Thus, this plan too is flexible.
+
+The 1st iteration will focus on creating and connecting the database, backend, and frontend. The database will be used to store submissions, grades, and potentially course information such as enrollment. However, at this stage, I will not be focused on database design yet, so the goal will be to create some empty tables. The backend will play the biggest role in this iteration, as I will aim to integrate Pylint and Plerr into the logic as early as possible. At the end of this iteration, I will create stubs for all of the routes I plan to have in the finished product, and be able to run Pylint from the backend, and send the appropriate Plerr example to the frontend. The Python code that Pylint runs on might have to be hard coded at this point. The frontend may not be more than a component in one of the routes that displays the Plerr example. 
+
+The 2nd iteration will focus on implementing the submit functionality from the student-side. Students will be able to upload a code file to the site, and the contents will be sent as text to the backend. Then, the logic from the last iteration will show the student any Plerr messages that resulted from their code. I will also add to the database and backend code so that grades from Pylint are able to be recorded in the database. This may or may not involve designing the relationships between students, courses, assignments, and teachers in the database. 
+
+The 3rd iteration will focus on implementing the style checker configurations on the teacher-side. On the frontend, this would involve an array of options that the teacher can turn on or off. For example, choosing to check for comments on top of every function, or not having that as a requirement. Each of these options will then create a specific configuration for the teacher-user's instance of Pylint on the backend. It would also be useful to save these configurations in the database as specific to a course or assignment. 
+
+The 4th iteration will focus on cleaning up the product to be presentable and usable for users. This work will include improving the previously neglected UI to feel somewhat like a real product. The end of this iteration will coincide with the start of the fall semester, making it a great opportunity to conduct the first larger evaluation involving users other an myself. Therefore, the results of this iteration may greatly shape or change the goals of the next iterations. 
+
+The 5th iteration will focus on fleshing out the teaching component of the project. Once students upload their file, this feature will display their code with the erroneous lines highlighted. Each of these highlighted lines will also have a corresponding pop-up box with the Plerr example from that error. If time permits, I may also add an interactive component to this feature, such as allowing the student to fix their code in the same display. Most of the work in this iteration will be in the frontend logic. 
+
+The 6th iteration will focus on adding a suggestive correction feature that participants thought of in user interviews. Using the errors found by the configured Pylint, this feature will pick out the errors that may be ambiguous, and flag them for the grader-user. Within the each flag, users will be able to either accept or reject the flag, which will then impact the grade that is outputted. The same syntax-highlighting and pop-up box logic from the previous iteration can be reused here, so new contributions must deal with determining which types of errors are most likely to be ambiguous, and creating the logic to accept and reject. 
+
+The 7th iteration will focus on refining the UI to be convenient and beginner-friendly, and adding any additional style checking features. For example, participants in the user interviews brought up the possibility of implementing call graphs and copy-paste checking to improve the style checking ability beyond Pylint. 
+
+The last iteration will be spent wrapping up the project, including debugging, refining, and most importantly, conducting final evaluations with users. As with the user interviews, this will involve identifying and gathering participants, creating a survey or interview guide, moderating, and analyzing results. 
+
+\begin{figure}
+\begin{lstlisting}
+6/6 (start of iteration): Create and connect database, backend with Pylint, & frontend
+6/27: Implement students' submit functionality
+7/18: Implement teachers' style checker configuration functionality
+8/8: Clean up product for user testing
+8/29: Add code highlight with Plerr example feature
+9/19: Add suggestive correction feature
+10/10: Improve UI & Add more style checking features
+10/31: Finishing touches & Final evaluations
+\end{lstlisting}
+    \vspace{7 mm}
+	\centering
+	\caption{Timeline of each Agile iteration.}
+\end{figure}
+
+
+\printbibliography 
+
+\end{document}
