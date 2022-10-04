@@ -1,0 +1,62 @@
+{
+    "C0304": {
+        "name": "missing-final-newline",
+        "bad": "\n# to be addded\n",
+        "good": "\n\n",
+        "rationale": "Used when the last line in a file is missing a newline.\\n\\n"
+    },
+    "C0116": {
+        "name": "missing-function-docstring",
+        "bad": "\ndef foo():\n    pass\n",
+        "good": "\n\n",
+        "rationale": "Missing function or method docstring used when a function or method has no \\ndocstring. Some special methods like `__init__`, protected, private functions,\\nsetters and deleters do not require a docstring (learn more from testscases).\\nIt\\'s a good practice to describe what a function does for other programmers.\\n\\n"
+    },
+    "C0114": {
+        "name": "missing-module-docstring",
+        "bad": "\n$ cat >> system.py <<EOF\nimport sys\nEOF\n",
+        "good": "\n\n",
+        "rationale": "Used when a module has no docstring. Empty modules do not require a docstring.\\n\\n"
+    },
+    "C0325": {
+        "name": "superfluous-parens",
+        "bad": "\nx = input()\ny = input()\nif (x == y):\n    pass\n",
+        "good": "\n\n",
+        "rationale": "Used when a single item in parentheses follows an `if`, `for`, `or` other\\nkeyword.\\n\\n"
+    },
+    "W0621": {
+        "name": "redefined-outer-name",
+        "bad": "\nvar = 0\n\n\ndef foo(x, y):\n    var = x + y\n    return var\n",
+        "good": "\n\n",
+        "rationale": "Used when a variable's name hides a name defined in the outer scope.\\n\\n"
+    },
+    "C0103": {
+        "name": "invalid-name",
+        "bad": "\naaa = 24\n",
+        "good": "\n\n",
+        "rationale": "Used when the name doesn't conform to naming rules associated to its type\\n(constant, variable, class...).\\n\\n"
+    },
+    "W1514": {
+        "name": "",
+        "bad": "",
+        "good": "",
+        "rationale": ""
+    },
+    "W0622": {
+        "name": "redefined-builtin",
+        "bad": "\ndef map(data):\n    pass\n",
+        "good": "\n\n",
+        "rationale": "Used when a variable or function override a built-in.\\n\\n"
+    },
+    "R1732": {
+        "name": "",
+        "bad": "",
+        "good": "",
+        "rationale": ""
+    },
+    "F0001": {
+        "name": "",
+        "bad": "",
+        "good": "",
+        "rationale": ""
+    }
+}
