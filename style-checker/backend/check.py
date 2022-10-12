@@ -1,12 +1,46 @@
+from dataclasses import replace
 import os
 import json
 import re
+from subprocess import Popen, PIPE
 
 
 def run_pylint(file_path):
-    os.popen("pylint --output-format=json:warnings.json " + file_path)
-    f = open("warnings.json")
-    return json.load(f)
+    process = Popen(['pylint', '--output-format=json', file_path], stdout=PIPE, stderr=PIPE)
+    stdout, stderr = process.communicate()
+    dict_str = stdout.decode("UTF-8")
+    return parse_pylint(dict_str)
+
+
+# takes str with all warnings in json format from pylint
+def parse_pylint(dict_str):
+    warn_strs = dict_str.split('},')
+    warnings = []
+    for str in warn_strs:
+        type_start = str.find('type": "') + 8
+        type = str[type_start : str.find('"', type_start)]
+        line_start = str.find('line": ') + 7
+        line = str[line_start : str.find(',', line_start)]
+        col_start = str.find('column": ') + 9
+        col = str[col_start : str.find(',', col_start)]
+        endline_start = str.find('endLine": ') + 10
+        endline = str[endline_start : str.find(',', endline_start)]
+        endcol_start = str.find('endColumn": ') + 12
+        endcol = str[endcol_start : str.find(',', endcol_start)]
+        msg_start = str.find('message": "') + 11
+        msg = str[msg_start : str.find('"', msg_start)]
+        id_start = str.find('id": "') + 6
+        id = str[id_start : str.find('"', id_start)]
+        warnings.append({
+            'type': type,
+            'line': line,
+            'column': col,
+            'endLine': endline,
+            'endColumn': endcol,
+            'message': msg,
+            'message-id': id,
+        })
+    return warnings
 
 
 def get_examples(msg_ids):
@@ -18,10 +52,11 @@ def get_examples(msg_ids):
         # pull from our json if this error has been encountered before
         # else get ex from plerr and add it to json
         if id not in ex_lib:
-            plerr = os.popen("plerr " + id)
-            output = re.sub(r'\\x1b\[[0-9;]+[a-z]', '', repr(plerr.read()))
+            process = Popen(['plerr', id], stdout=PIPE, stderr=PIPE)
+            stdout, stderr = process.communicate()
+            outstr = stdout.decode("UTF-8")
+            output = re.sub(r'\\x1b\[[0-9;]+[a-z]', '', repr(outstr))
             ex_lib[id] = parse_plerr(output)
-            plerr.close()
             write = True
         send_ex[id] = ex_lib[id]
     if write:
@@ -31,6 +66,7 @@ def get_examples(msg_ids):
     return send_ex
 
 
+# takes single stdout example from plerr
 def parse_plerr(ex):
     name = ex[11 : ex.find(')')]
     bad_start = ex.find('\\n', ex.find('```'))
