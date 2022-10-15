@@ -6,37 +6,25 @@ import './Form.css'
 
 
 function Form() {
-  const [file, setFile] = useState(null);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(`# Paste your code here!\n\n`);
 
-  const setFileCallback = file => setFile(file);
   const setCodeCallback = code => setCode(code);
+  const setFileCallback = file => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = () => {
+        setCode(reader.result);
+    }
+    reader.onerror = () => {
+        console.log('file error', reader.error);
+    }
+  };
 
   const url = 'http://127.0.0.1:5000/'
 
-  function handleFileSubmit(event) {
+  function handleSubmit(event) {
     event.preventDefault();
-    if (!file) {
-      return;
-    }
-    let data = new FormData();
-    data.append('file', file);
-    axios.post(url, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-      .then(res => {
-        console.log('res', res)
-      })
-      .catch(error => {
-        console.error("Error fetching data:", error)
-      });
-  }
-
-  function handleCodeSubmit(event) {
-    event.preventDefault();
-    if (!code) {
+    if (!code.trim() || code.trim() === `# Paste your code here!`) {
       return;
     }
     axios.post(url, JSON.stringify(code), {
@@ -54,21 +42,18 @@ function Form() {
 
   return (
     <div className="text-center">
-        <div className="formDiv">
-            <form onSubmit={handleFileSubmit}>
-            <FileUpload setFile={setFileCallback}/>
-            <button className="btn btn-blue" type="submit">Submit file</button>
-            </form>
-        </div>
-        <div>
-            <h1 className="text-xl my-8">OR</h1>
-        </div>
-        <div className="formDiv">
-            <form onSubmit={handleCodeSubmit}>
-            <CodeEditor setCode={setCodeCallback}/>
-            <button className="btn btn-blue" type="submit">Submit code</button>
-            </form>
-        </div>
+        <form onSubmit={handleSubmit}>
+            <div className="formDiv">
+                <FileUpload setFile={setFileCallback}/>
+            </div>
+            <div>
+                <h1 className="text-xl my-8">OR</h1>
+            </div>
+            <div className="formDiv">
+                <CodeEditor value={code} setCode={setCodeCallback}/>
+                <button className="btn btn-blue" type="submit">Check Style</button>
+            </div>
+        </form>
    </div>
   );
 }

@@ -13,18 +13,11 @@ const highlightWithLineNumbers = (input, language) =>
     .join("\n");
 
 function CodeEditor(props) {
-  const [code, setCode] = useState(`# Paste your code here!\n\n`);
-
-  function handleValueChange(code) {
-    props.setCode(code);
-    setCode(code);
-  }
-  
   return (
     <div className="bg-slate-100">
       <Editor
-        value={code}
-        onValueChange={code => handleValueChange(code)}
+        value={props.value}
+        onValueChange={code => props.setCode(code)}
         highlight={code => highlightWithLineNumbers(code, languages.py)}
         padding={10}
         textareaId="codeArea" 
