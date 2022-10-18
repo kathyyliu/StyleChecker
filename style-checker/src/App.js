@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+import NavBar from './components/NavBar';
 import FileUpload from './components/FileUpload';
 import CodeEditor from './components/CodeEditor';
 import Feedback from './components/Feedback';
@@ -22,10 +23,12 @@ export default function App() {
     reader.onerror = () => {
         console.log('file error', reader.error);
     }
+    setSubmitted(false);
   };
 
   const url = 'http://127.0.0.1:5000/'
 
+  
   function handleSubmit(event) {
     event.preventDefault();
     if (!code.trim() || code.trim() === `# Paste your code here!`) {
@@ -49,16 +52,16 @@ export default function App() {
 
   return (
     <div className="text-center">
-      <form onSubmit={handleSubmit}>
+      <NavBar/>
+      <form id="code-form" onSubmit={handleSubmit}>
             <FileUpload setFile={setFileCallback}/>
           <div>
               <h1 className="text-xl my-8">OR</h1>
           </div>
-          <div className="flex flex-row mx-8">
+          <div className="flex flex-row mx-8 mb-12">
               <CodeEditor value={code} setCode={setCodeCallback}/>
               {isSubmitted && <Feedback warnings={warnings} examples={examples}/>}
           </div>
-          <button className="btn btn-blue" type="submit">Check Style</button>
       </form>
    </div>
   );
