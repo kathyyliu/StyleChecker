@@ -1,5 +1,4 @@
 from dataclasses import replace
-import os
 import json
 import re
 from subprocess import Popen, PIPE
@@ -28,7 +27,7 @@ def parse_pylint(dict_str):
         endcol_start = str.find('endColumn": ') + 12
         endcol = str[endcol_start : str.find(',', endcol_start)]
         msg_start = str.find('message": "') + 11
-        msg = str[msg_start : str.find('"', msg_start)]
+        msg = str[msg_start : str.find('",', msg_start)].replace('\n', '').replace('\\"', "'")
         id_start = str.find('id": "') + 6
         id = str[id_start : str.find('"', id_start)]
         warnings.append({
@@ -69,14 +68,14 @@ def get_examples(msg_ids):
 # takes single stdout example from plerr
 def parse_plerr(ex):
     name = ex[11 : ex.find(')')]
-    bad_start = ex.find('\\n', ex.find('```'))
+    bad_start = ex.find('\\n', ex.find('```')) + 2
     bad_end = ex.find("```", bad_start)
     bad_code = ex[bad_start : bad_end].replace('\\n', '\n')
-    good_start = ex.find('\\n', ex.find('Correct code'))
+    good_start = ex.find('\\n', ex.find('```', bad_end + 3)) + 2
     good_end = ex.find("```", good_start)
     good_code = ex[good_start : good_end].replace('\\n', '\n')
     rationale_idx = ex.find("Rationale") + 14
-    rationale = ex[rationale_idx : ex.find("###", rationale_idx)].replace('\n', '')
+    rationale = ex[rationale_idx : ex.find("###", rationale_idx)].replace('\\n', ' ').replace("\\'", "'")
     return {
         'name': name,
         'bad': bad_code,

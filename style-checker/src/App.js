@@ -51,9 +51,9 @@ export default function App() {
   }
 
   return (
-    <div className="text-center">
+    <div>
       <NavBar/>
-      <form id="code-form" onSubmit={handleSubmit}>
+      <form className="text-center" id="code-form" onSubmit={handleSubmit}>
             <FileUpload setFile={setFileCallback}/>
           <div>
               <h1 className="text-xl my-8">OR</h1>

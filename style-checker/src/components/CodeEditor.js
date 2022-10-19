@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-python';
@@ -14,7 +13,7 @@ const highlightWithLineNumbers = (input, language) =>
 
 function CodeEditor(props) {
   return (
-    <div className="bg-slate-100">
+    <div className="flex-grow">
       <Editor
         value={props.value}
         onValueChange={code => props.setCode(code)}

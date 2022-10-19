@@ -1,6 +1,7 @@
 .editor {
 counter-reset: line;
 border: 1px solid #ced4da;
+background: rgb(239, 239, 239);
 }
 
 .editor #codeArea {
