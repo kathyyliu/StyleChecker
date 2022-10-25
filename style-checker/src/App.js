@@ -41,7 +41,8 @@ export default function App() {
     })
       .then(res => {
         setSubmitted(true);
-        setWarnings(res.data.warnings);
+        const sorted_warns = res.data.warnings.sort((a, b) => parseInt(a.line) - parseInt(b.line));
+        setWarnings(sorted_warns);
         setExamples(res.data.examples);
         console.log('res', res);
       })
@@ -59,7 +60,7 @@ export default function App() {
               <h1 className="text-xl my-8">OR</h1>
           </div>
           <div className="flex flex-row mx-8 mb-12">
-              <CodeEditor value={code} setCode={setCodeCallback}/>
+              <CodeEditor value={code} setCode={setCodeCallback} isSubmitted={isSubmitted} warnings={warnings}/>
               {isSubmitted && <Feedback warnings={warnings} examples={examples}/>}
           </div>
       </form>
