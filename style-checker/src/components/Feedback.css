@@ -1,0 +1,8 @@
+pre[class*="language-"]:before,
+pre[class*="language-"]:after {
+    display: none;
+}
+
+.code-snip {
+    font-size: .8rem;
+}
