@@ -57,6 +57,7 @@ function CodeEditor(props) {
         padding={10}
         textareaId="codeArea" 
         className="editor"
+        placeholder="Paste your code here!"
         style={{
           fontFamily: '"Fira code", "Fira Mono", monospace',
           fontSize: 14,

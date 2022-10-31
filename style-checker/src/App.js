@@ -8,7 +8,7 @@ import './App.css';
 
 
 export default function App() {
-  const [code, setCode] = useState(`# Paste your code here!\n\n`);
+  const [code, setCode] = useState('');
   const [isSubmitted, setSubmitted] = useState(false);
   const [warnings, setWarnings] = useState(null);
   const [examples, setExamples] = useState(null);
@@ -28,10 +28,9 @@ export default function App() {
 
   const url = 'http://127.0.0.1:5000/'
 
-  
   function handleSubmit(event) {
     event.preventDefault();
-    if (!code.trim() || code.trim() === `# Paste your code here!`) {
+    if (!code.trim()) {
       return;
     }
     axios.post(url, JSON.stringify(code), {
