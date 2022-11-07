@@ -1,3 +1,4 @@
+import React, {useEffect, useState} from 'react';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-python';
@@ -21,19 +22,26 @@ const consolidateTypes = (type) => {
     return 'convention'; // convention, refactor, information
   }
 
+
 function CodeEditor(props) {
 
-  const lineColors = {};
-  if (props.isSubmitted) {
-      // ensure highest severity color shown for lines w mult. msgs
-    props.warnings.forEach((warning) => {
-      const line = warning.line;
-      const type = consolidateTypes(warning.type);
-      if (!(line in lineColors) || enumColors[type] > enumColors[lineColors[line]]) {
-        lineColors[line] = type;
-      }
-    });
-  }
+  const [numLines, setNumLines] = useState(1);
+  const [lineColors, setLineColors] = useState({});
+
+  useEffect(() => {
+    if (props.isSubmitted) {
+        // ensure highest severity color shown for lines w mult. msgs
+      const newLineColors = {};
+      props.warnings.forEach((warning) => {
+        const line = warning.line;
+        const type = consolidateTypes(warning.type);
+        if (!(line in newLineColors) || enumColors[type] > enumColors[newLineColors[line]]) {
+          newLineColors[line] = type;
+        }
+      });
+      setLineColors(newLineColors);
+    }
+  }, [props.warnings]);
 
   const buildLineSpan = (codeLine, i) => {
     if (!props.isSubmitted || !(i+1 in lineColors)) {
@@ -48,11 +56,21 @@ function CodeEditor(props) {
     .map(buildLineSpan)
     .join("\n");
 
+  const handleValueChange = (code) => {
+    props.setCode(code);
+    const newNumLines = code.split('\n').length;
+    if (newNumLines !== numLines) {
+      props.submit('background', code);
+      setNumLines(newNumLines);
+    }
+  }
+
+  const m = props.isSubmitted ? "block" : "block mx-auto"
   return (  
-    <div className="flex-grow">
+    <div className={m}>
       <Editor
         value={props.value}
-        onValueChange={code => props.setCode(code)}
+        onValueChange={handleValueChange}
         highlight={code => highlightWithLineNumbers(code, languages.py)}
         padding={10}
         textareaId="codeArea" 

@@ -7,7 +7,6 @@ import './Feedback.css'
 function Feedback(props) {
 
     Prism.highlightAll();
-
     // TODO: prevent rerender on code change --> useMemo()?
     function buildMessage(id) {
         const ex = props.examples[id];
@@ -52,5 +51,28 @@ function Feedback(props) {
         </div>
     );
 }
+    
+//     // 21px
+//     const warning = props.warnings[0];
+//     const msg = <div className="language-python accordion-item bg-white border border-gray-200" key="1">
+//             <h2 className="accordion-header mb-0">
+//                 <button className="accordion-button collapsed relative flex items-center w-full py-2 px-5 text-base text-gray-800 text-left bg-white
+//                     border-0 rounded-none transition focus:outline-none" 
+//                     type="button" data-bs-toggle="collapse" data-bs-target={"#collapse1"} aria-expanded="false" aria-controls={"#collapse1"}>
+//                     <p><b>Line {warning.line}: </b>{warning.message}</p>
+//                 </button>
+//             </h2>
+//             <div id="collapse1" className="accordion-collapse collapse"
+//             data-bs-parent="#warningsAccordion">
+//                 {buildMessage(warning["message-id"])}
+//             </div>
+//         </div>
+
+//     return (
+//         <div className="accordion" id="warningsAccordion">
+//             {msg}
+//         </div>
+//     );
+// }
 
 export default Feedback;

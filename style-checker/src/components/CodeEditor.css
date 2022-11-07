@@ -11,6 +11,8 @@ padding-left: 60px !important;
 
 .editor pre {
 padding-left: 60px !important;
+min-width: 700px;
+min-height: 100px;
 }
 
 .editor .editorLineNumber {

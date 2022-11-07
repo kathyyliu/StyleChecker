@@ -3,6 +3,10 @@ pre[class*="language-"]:after {
     display: none;
 }
 
+.accordion-item {
+    max-width: 300px;
+}
+
 .code-snip {
     font-size: .8rem;
 }

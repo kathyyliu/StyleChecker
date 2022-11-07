@@ -13,7 +13,6 @@ export default function App() {
   const [warnings, setWarnings] = useState(null);
   const [examples, setExamples] = useState(null);
 
-  const setCodeCallback = code => setCode(code);
   const setFileCallback = file => {
     const reader = new FileReader();
     reader.readAsText(file);
@@ -28,12 +27,15 @@ export default function App() {
 
   const url = 'http://127.0.0.1:5000/'
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    if (!code.trim()) {
+  function handleSubmit(event, backgroundCode) {
+    if (event !== 'background') {
+       event.preventDefault();
+    }
+    const newcode = backgroundCode ? backgroundCode : code;
+    if (!newcode.trim()) {
       return;
     }
-    axios.post(url, JSON.stringify(code), {
+    axios.post(url, JSON.stringify(newcode), {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -53,14 +55,14 @@ export default function App() {
   return (
     <div>
       <NavBar/>
-      <form className="text-center" id="code-form" onSubmit={handleSubmit}>
+      <form id="code-form" onSubmit={handleSubmit}>
             <FileUpload setFile={setFileCallback}/>
           <div>
-              <h1 className="text-xl my-8">OR</h1>
+              <h1 className="text-center text-xl my-8">OR</h1>
           </div>
-          <div className="flex flex-row mx-8 mb-12">
-              <CodeEditor value={code} setCode={setCodeCallback} isSubmitted={isSubmitted} warnings={warnings}/>
-              {isSubmitted && <Feedback warnings={warnings} examples={examples}/>}
+          <div className="flex mx-auto mb-12 content-start justify-center">
+             {isSubmitted && <Feedback warnings={warnings} examples={examples}/>}
+              <CodeEditor value={code} isSubmitted={isSubmitted} warnings={warnings} setCode={setCode} submit={handleSubmit}/>
           </div>
       </form>
    </div>
