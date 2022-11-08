@@ -3,8 +3,8 @@ pre[class*="language-"]:after {
     display: none;
 }
 
-.accordion-item {
-    max-width: 300px;
+.popover {
+    width: 300px;
 }
 
 .code-snip {

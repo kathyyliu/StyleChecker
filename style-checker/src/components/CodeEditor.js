@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import ReactDOMServer from 'react-dom/server'
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-python';
@@ -6,21 +7,21 @@ import 'prismjs/themes/prism-coy.css';
 import './CodeEditor.css'
 
 
-const enumColors = {
-  'error': 3,
-  'warning': 2,
-  'convention': 1,
-}
+const msgTypeColors = {
+  3: 'red-200',
+  2: 'orange-200',
+  1: 'yellow-200',
+};
 
 const consolidateTypes = (type) => {
     if (type === 'error' || type === 'fatal') {
-      return 'error';
+      return 3;
     }
     if (type === 'warning') {
-      return 'warning';
+      return 2;
     }
-    return 'convention'; // convention, refactor, information
-  }
+    return 1; // convention, refactor, information
+};
 
 
 function CodeEditor(props) {
@@ -35,7 +36,7 @@ function CodeEditor(props) {
       props.warnings.forEach((warning) => {
         const line = warning.line;
         const type = consolidateTypes(warning.type);
-        if (!(line in newLineColors) || enumColors[type] > enumColors[newLineColors[line]]) {
+        if (!(line in newLineColors) || type > newLineColors[line]) {
           newLineColors[line] = type;
         }
       });
@@ -44,10 +45,12 @@ function CodeEditor(props) {
   }, [props.warnings]);
 
   const buildLineSpan = (codeLine, i) => {
-    if (!props.isSubmitted || !(i+1 in lineColors)) {
-      return `<span class='editorLineNumber'>${i + 1}</span>${codeLine}`;
+    const line = i + 1;
+    if (!props.isSubmitted || !(line in lineColors)) {
+      return `<span class='editorLineNumber'>${line}</span>${codeLine}`;
     }
-    return `<span class='editorLineNumber bg-${lineColors[i+1]}'><p class='text-black'>${i + 1}</p></span>${codeLine}`;
+    const contentId = 'msg-content-' + line;
+    return `<span id='${line}' class='editorLineNumber errorLine bg-${msgTypeColors[lineColors[line]]}'><p class='text-black'>${line}</p></span>${codeLine}`;
   }
 
   const highlightWithLineNumbers = (input, language) =>
@@ -65,9 +68,7 @@ function CodeEditor(props) {
     }
   }
 
-  const m = props.isSubmitted ? "block" : "block mx-auto"
   return (  
-    <div className={m}>
       <Editor
         value={props.value}
         onValueChange={handleValueChange}
@@ -82,7 +83,6 @@ function CodeEditor(props) {
           outline: 0,
         }}
       />
-    </div>
   );
 }
 

@@ -56,14 +56,17 @@ export default function App() {
     <div>
       <NavBar/>
       <form id="code-form" onSubmit={handleSubmit}>
-            <FileUpload setFile={setFileCallback}/>
-          <div>
-              <h1 className="text-center text-xl my-8">OR</h1>
+        <FileUpload setFile={setFileCallback}/>
+        <div>
+          <h1 className="text-center text-xl my-8">OR</h1>
+        </div>
+        <div className="flex mx-auto pb-64 content-start">
+          {isSubmitted && 
+            <Feedback warnings={warnings} examples={examples}/>}
+          <div className={isSubmitted ? "" : "mx-auto"}>
+            <CodeEditor value={code} isSubmitted={isSubmitted} warnings={warnings} setCode={setCode} submit={handleSubmit}/>
           </div>
-          <div className="flex mx-auto mb-12 content-start justify-center">
-             {isSubmitted && <Feedback warnings={warnings} examples={examples}/>}
-              <CodeEditor value={code} isSubmitted={isSubmitted} warnings={warnings} setCode={setCode} submit={handleSubmit}/>
-          </div>
+        </div>
       </form>
    </div>
   );
