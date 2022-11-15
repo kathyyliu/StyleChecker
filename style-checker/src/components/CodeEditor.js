@@ -25,7 +25,6 @@ const consolidateTypes = (type) => {
 
 
 function CodeEditor(props) {
-
   const [numLines, setNumLines] = useState(1);
   const [lineColors, setLineColors] = useState({});
 
@@ -49,7 +48,6 @@ function CodeEditor(props) {
     if (!props.isSubmitted || !(line in lineColors)) {
       return `<span class='editorLineNumber'>${line}</span>${codeLine}`;
     }
-    const contentId = 'msg-content-' + line;
     return `<span id='${line}' class='editorLineNumber errorLine bg-${msgTypeColors[lineColors[line]]}'><p class='text-black'>${line}</p></span>${codeLine}`;
   }
 
@@ -62,7 +60,7 @@ function CodeEditor(props) {
   const handleValueChange = (code) => {
     props.setCode(code);
     const newNumLines = code.split('\n').length;
-    if (newNumLines !== numLines) {
+    if (newNumLines !== numLines && props.isSubmitted) {
       props.submit('background', code);
       setNumLines(newNumLines);
     }

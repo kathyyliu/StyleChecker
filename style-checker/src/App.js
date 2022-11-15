@@ -60,12 +60,10 @@ export default function App() {
         <div>
           <h1 className="text-center text-xl my-8">OR</h1>
         </div>
-        <div className="flex mx-auto pb-64 content-start">
+        <div className="flex mx-auto pb-64 content-start justify-center">
           {isSubmitted && 
-            <Feedback warnings={warnings} examples={examples}/>}
-          <div className={isSubmitted ? "" : "mx-auto"}>
+            <Feedback warnings={warnings} examples={examples} isSubmitted={isSubmitted}/>}
             <CodeEditor value={code} isSubmitted={isSubmitted} warnings={warnings} setCode={setCode} submit={handleSubmit}/>
-          </div>
         </div>
       </form>
    </div>

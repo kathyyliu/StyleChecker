@@ -3,10 +3,21 @@ pre[class*="language-"]:after {
     display: none;
 }
 
-.popover {
-    width: 300px;
+.popover:before {
+    content: " ";
+    position: absolute;
+    background: #f3f4f6;
+    width: 23px;
+    height: 23px;
+    top: 8px;
+    right: -9px;
+    transform: rotate(45deg);
 }
 
 .code-snip {
     font-size: .8rem;
+}
+
+.lineBut {
+    left: 300px;
 }
