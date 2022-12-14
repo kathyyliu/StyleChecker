@@ -1,0 +1,356 @@
+\documentclass[10pt,twocolumn]{article} 
+
+\usepackage{oxycomps} % use the main oxycomps style file
+
+\bibliography{references}
+
+\pdfinfo{
+    /Title (Style Checker: Teaching Python Code Style Through Self-Correction)
+    /Author (Kathy Liu)
+}
+
+\title{Style Checker: Teaching Python Code Style Through Self-Correction}
+
+\author{Kathy Liu}
+\affiliation{Occidental College}
+\email{kliu4@oxy.edu}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem Context}
+Code style is thought of as adherence to syntactic coding standards for a language, such as use of whitespace, line length, formatting, and more. 
+However, the importance of code style is much more than mere aesthetics, as it also extends to "code smells" that signal a deeper need to refactor, such as dead or repeated code. 
+Good code style allows for easy collaboration between programmers and extendability to a project.
+Thus, code style is at the heart of readable and quality code, making it an essential skill for programmers. 
+For novice programmers that are still learning correct logic and have yet to build context to understand the nuances of the programs they write, grasping a sense for code style can feel abstract. 
+This difficulty is also accentuated by the fact that  
+Building the habit of coding with good style early on helps students break out of the mindset that code that merely produces the expected output is good enough more easily than relearning style later on. 
+
+All this makes code style important for any Computer Science (CS) student who wishes to continue to code after a single introductory course, but it is also relevant to students who do not. 
+Initial user interviews with students in introductory-level CS courses indicated that code style is graded for in their assignments. 
+Simultaneously, students feel confused about what is required of them to get a good grade for code style, indicating either a lack of communication from the instructor, or understanding of style. 
+This reveals a potential need for more instruction or opportunities for students to learn code style. 
+
+Just as a deeper sense for style can be hard to grasp and teach, style is also difficult to grade. 
+In computer science courses at the undergraduate level, it is standard for coding assignments to be put through a test suite for correctness, then given to teaching assistants and human graders to evaluate on style. 
+These human graders must be trained, paid for their work, and also often create a bottleneck for assignment turnaround time. 
+This delay in getting feedback for style makes it more difficult for students to improve their style compared to correctness.
+A simple solution would be to automate the process.
+Prior work also shows human graders are inconsistent between each other and also compared to automatic graders, which can be considered to uphold the style grading criteria exactly \cite{perretta_2019}. 
+Then, if style could be evaluated autonomously, it would be quicker and more consistent than human graders, which can help close the feedback loop on style for students. 
+
+To address these issues, I propose a web application that gives students immediate style feedback on their code, with explanations and examples that enable students to correct their own mistakes, while developing a sense for good style. 
+
+\section{Technical Background}
+In order to check style, each file in a submission must be parsed by a parser and evaluated based on predefined style criteria. 
+This project will use Pylint as a starting point for the checking functionalities of the web app. 
+Pylint is an open source, general linter for Python, but is also often used in CS classrooms to grade student code. 
+Additionally, I chose to use Pylint as the foundation for this project because unlike other linters for Python, it checks for stylistic compliance instead of just logical errors, and is one of the most critical linters.
+In order to turn each of the students' errors into opportunities to learn style, I will use Plerr, a curated list that correlates Pylint error codes with reasoning and examples of erroneous and correct code \cite{plerr}. 
+
+I decided for this project to be in the form of a web application because it is likely that students will already be working off of their computers on the CS assignments this project will take as input. 
+Putting the application on the web will also make it simpler for instructors to link the tool to their students to access from any computer. 
+The frontend is written with ReactJS and uses a server written with Flask. 
+I chose to use Flask for this project because it is lightweight and makes connecting with Python code that performs tasks needed in this project like parsing and making temporary files easier. 
+
+\section{Prior Work}
+\subsection{Linters}
+In general, a linter is a tool that analyzes a piece of code for bugs and style errors without executing the code.
+Other than Pylint, Pyflakes and Flake8 are also well-known linters for Python, while Checkstyle for Java, Linter for Scala, and ESLint for Javascript are some examples of linters for other languages. 
+This project will build on top of the assistance provided by linters, namely Pylint, in order to provide better user friendliness.
+For instance, Pylint is only available to use through a command line interface, which may be daunting to navigate for those just starting out in CS.
+The command line is also less readable than a web app interface because it only supports basic text display options and outputs the style feedback in one long list.
+Thus, if a student wanted to look at the feedback for a specific line, they would have to manually scroll through the messages to find one that matched that line number. 
+
+Most importantly, the feedback the Pylint gives out-of-the-box is also not very helpful for students, who have less CS context than developers using Pylint. 
+Feedback messages given by Pylint are brief and not meant to be explanatory.
+In fig. 1, a student with less than one year of coding experience might read these messages from Pylint and be confused about what “snake\_case” and “docstring” mean. 
+Additionally, even if they know what the message means, they may not know how to fix it in their code.
+In the third message of fig. 1, a student may understand that the message is telling them to remove some else statement in their code, but not be able to tell which else statement to remove, or why it is unnecessary.
+These examples show that any linter by itself is not a sufficient tool for helping students fix and improve their understanding of code style.
+
+\begin{figure}
+\includegraphics[width=8cm]{images/pylint.png}
+\centering
+ \vspace{.5cm}
+\caption{Part of a typical output from Pylint on a file named example.py.}
+\end{figure}
+
+\subsection{IDE's}
+IDE's, or integrated development environments, are another tool often used for fixing code style. 
+Most IDE's like Pycharm and VSCode have compatibility with linters either by default or with plugin. 
+IDE's with a linter will usually continuously lint the code while a programmer is writing it and provide additional indicators through the UI, such as underlining erroneous code with a red squiggle. 
+When the user hovers over code flagged by the linter in the IDE, a popover containing a short description of the error will appear. 
+Another common feature is offering Machine Learning-powered suggestions from the IDE to alter or fix flagged code. 
+The IDE may also be able to automatically apply the fix upon user selection of one of the suggestions. 
+In this way, IDE's seem like a good tool for students to check and learn style compared to just a linter because it improves on linters' lack of a UI and can fix errors automatically. 
+It is also a tool students likely are already using for their CS classes.
+
+However, it falls short in providing beginner-friendly explanations for the errors and suggestions. 
+Without this bridge to understanding, an automatic fix leaves the student with a gap in their own code style abilities. 
+Additionally, IDE's are not products that focus on style specifically. 
+This is impactful because beginning CS students already tend to view code that produces that runs correctly as “good enough.” 
+Since IDE's also allow one to build and run code, beginning students are more prone to forgoing style because they become distracted by correctness. 
+In order to combat this misconception that style does not matter compared to correctness, there must be a tool that puts more emphasis on style than correctness. 
+
+\subsection{Other Tools}
+There have also been code-style-specific teaching materials created for CS classrooms, but most are in the form of exercise books. 
+The existing applications that aim to teach code style also tend to require a significant corpus of similar \cite{moghadam_2015} or verifiably bad code \cite{mcmaster_2013}. 
+Additionally, students still struggled to implement style improvements even with the specific recommendations from these applications \cite{wiese_2017}. 
+I am not considering style guides as teaching material, because not all of them are explanatory, and the explanations that do exist are not usually written for an audience with less programming experience. 
+
+
+\section{Methods}
+\subsection{Initial Interviews}
+First, I conducted a series of user interviews on professors teaching undergraduate-level courses involving CS in order to inform myself of the needs of the audience I wish to address through this project. 
+To guide the formation of the interview process, I referenced a user interview tutorial in User Interviews Inc.'s The UX Research Field Guide \cite{interview_tutorial}. 
+As this project aims to help both teachers and students of code style, I chose to conduct interviews to learn about professors' beliefs about code style, and the context in which code style is considered in their courses. 
+Through informal interactions with students as a tutor, I also believed I had a good grasp of beginning CS students' views on code style, but not their professors'.
+
+To prepare the interview guide, I first considered the general themes of information from teachers that I wanted to know in relation to the functionality of the product. 
+The themes I identified were: the theoretical role of code style, teaching style, and code style-related tools. 
+Next, I wrote 2-4 questions addressing each of these themes, intentionally keeping the wording open-ended and minimizing presumptions. 
+After identifying the individuals that fit this profile in my immediate surroundings, I then reached out to six professors in the Computer Science department, and two professors in other departments to participate in my interview. 
+Of these invitations, only four Computer Science faculty responded and were available to meet within my time frame. 
+I then reviewed the interview transcripts and notes to uncover shared opinions about each of my themes.
+Because of the small sample size of these interviews, I did not attempt any statistical analysis of these opinions. 
+
+On the theme of the theoretical meaning and role of code style, all participants said that readability and following a convention or consistency were central to good code style. 
+Specifically for consistency, all four participants also expressed that there is no one universally correct convention across different programming languages, projects, and teams.
+These sentiments are inline with what I expected to hear, but I was surprised by the amount of variation in philosophies surrounding readability versus convention, for example, in a case where the two were at odds. 
+In application to a style checker, adherence to convention is much easier to implement than general readability, which may be impossible to automatically check for, at least in the scope of this project. 
+However, since a universally correct convention does not exist, the checker must have some level of adaptability or customization in order to meet the needs of these participants.
+
+As for how participants treat style in their courses, overall, participants seemed like they were not concerned with spending much time in class to teach style. 
+In this context, “lower-level courses” will refer to introductory courses and data structures, and “upper-level courses” will refer to electives that have lower-level courses as prerequisites. 
+In their lower-level courses, participants either touch on style briefly toward the beginning of the semester or do not explicitly teach code style at all.
+One of the participants that teach style also noted they believe their students learn good style by observing the participant's code style. 
+This indicates that an effective way to teach style is through example.
+Some of the participants explicitly grade for style on these lower-level assignments using some kind of human grader--either teacher's assistants or themselves, while others will consider style more informally. 
+However, the weight of the style grade is very low compared to the other parts of the projects, such as correctness.
+Compared to the upper-level courses, code style may be more emphasized by participants to their students since it is a new skill they have not encountered before and because it would be harder to fix one's stylistic habits later if students do not learn it from the beginning.
+None of the participants teach style in their upper-level courses, and none have any of them used products to teach or evaluate style. 
+In the upper-level courses, students are expected to already know and practice good code style. 
+This is also reflected by the report that project grades in these courses do not have a distinct category that considers code style. 
+These responses give me context into where my project may be most useful among these courses. 
+Specifically, I may target its use to be primarily for use in lower-level, introductory courses, since that is where students seem to pick up code style, and where code style is more heavily considered in grading. 
+That would mean that the teaching side should assume very little prior CS knowledge and have a relatively straightforward UI. 
+
+When asked about what features they would wish for in a code style-related tool, participants had many interesting suggestions. 
+One participant suggested a tool that automates grading style could implement corrections that are suggestive to a human grader.
+Some participants expressed they chose to use human graders instead of some automatic system like a linter to grade style because they did not find existing linters to be up to par with their grading needs. 
+For instance, a linter would not be able to tell if a variable name is informative or not. 
+A grading tool with suggestive corrections would place the burden of these ambiguous tasks on the human, while still making grading easier. 
+This tool could take care of easier style criteria, like line length, and direct a human grader's attention to each variable and have them decide if it was named appropriately or not, for example. 
+Although this comment was made in relation to grading, it can easily be extended for a tool that makes students walk through their code and evaluate their variable names, any other piece of style.
+While students assess their own code, they can reevaluate their style independent of correctness. 
+As seen with the differences between participants' grading criteria, a product that grades style must also be able to adapt to different criteria. 
+Some participants suggested allowing interchangeable, preset style checks, such as preferring tabs or 4 spaces, to accommodate the individual needs of a professor, course, or project.
+
+\subsection{Proof of Concept}
+I consider this project to contribute two core novel ideas: using a UI and information from Plerr to enhance Pylint, and teaching style through self-correction. 
+In my imagination of the final product, I envisioned an IDE-like layout, including a code editor to implement the self-correction aspect, and messages appearing on lines with bugs or style errors. 
+The content of these messages would be essential, since it needs to be understandable to introductory-level students. 
+Implementing an out-of-the-box message from Pylint to explain a style error would be no better at teaching style than an IDE. 
+Hence, a proof of concept for this project would be a very simple web application that can take a Python file from the frontend and in the backend, run Pylint on the file, and combine the output with information from Plerr. 
+The final output should be a JSON of messages indicating style errors in the code that are more informative than Pylint or IDE messages. 
+This JSON will eventually be the response from the backend to the frontend.
+As this is only a proof of concept focusing on the content of the messages, no consideration will be given to the UI for both uploading the file and displaying the messages in the frontend. 
+This proof of concept will also not include the self-correction portion of the project, as it is a more secondary teaching component of the project compared to the messages. 
+
+To create the backend for the proof of concept, I first created a Flask application that will act as the server. 
+Since both Pylint and Plerr are only operable through the command line, I used the subprocess module to run both. 
+Pylint has the option for the output to be a string in JSON format that includes information such as line number, message, message type, and message ID. 
+This ID is also the input for Plerr, which then outputs the rationale and example code snippets for the error into standard output. 
+This output requires cleaning, such as removing the styling information and parsing to isolate each portion of output. 
+
+Since Plerr only takes one message ID at a time, if a file has twenty distinct errors identified by Pylint, the backend would have to open a process to run Plerr twenty times to get each of the corresponding examples, which is very inefficient. 
+There are two easy solutions to this: store an exhaustive dictionary of all the examples in the frontend and eliminate any direct interaction with Plerr, or store a working dictionary of all previously generated examples and run Plerr only on message ID's the app has never seen before. 
+The first solution would marginally speed up backend calls, but requires more work upfront to implement. 
+To build the exhaustive dictionary, one would either have to scrape Plerr's website \cite{plerr}, which contains every example the library provides, or run Plerr on every existing Pylint message ID, of which there are 188. 
+Scraping would take too much time, so I decided if I would have to run Plerr on every ID anyways, I may as well let users contribute the ID's through their use of the app and naturally distribute the work of running Plerr over time with the second solution. 
+After a certain number of different files is submitted through the app, the working dictionary of examples will cover all of the common message ID's, which still improves the average response time. 
+
+Now that we have the components of the response, the errors and examples, we need a frontend to collect users' Python files to send to the backend. 
+After creating a React application with Node, I created a form with a file drag-and-drop component. 
+When the user submits the form, the file they uploaded is then sent in a POST request to our Flask server. 
+However, since Pylint requires a path to the file to lint as input, this file needs to be temporarily saved on the server at a retrievable location. 
+To achieve this, I used the tempfile module in Python to write the contents of the user's file to a temporary named file on the server. 
+After using the temporary file to build the response JSON, the file deletes itself when closed. 
+At this point, the complete backend for the project is effectively finished, which is represented by the green side in fig. 2. 
+We now have a complete proof of concept for our project that allows a user to upload a Python file through a web application, click submit, and see a JSON response of style errors and accompanying examples for each error printed in the console. 
+
+\begin{figure}
+\includegraphics[width=8cm]{images/systemarch.png}
+\centering
+\vspace{.5cm}
+\caption{System architecture diagram for the application, with backend (green) and frontend (yellow).}
+\end{figure}
+
+\subsection{Prototyping}
+Building on top of the proof of concept, we must add additional features in the frontend that will display the messages and allow users to self-correct their code. 
+To start, I added a code editor component to my single page application. 
+Because my project focuses solely on style rather than correctness, I did not need a code editor with extra functionality like code folding or customizable key bindings. 
+Accordingly, I chose to use react-simple-code-editor \cite{react-simple-code-editor} in my project, which is lightweight and no-frills compared to more popular code editors. 
+With the file upload and the code editor, users now have two options for submitting code in the application. 
+I also implemented logic to make the contents of a file appear in the editor after the user uploads it. 
+This both adds a touch of convenience for the user to let them confirm or edit the contents of the file, and simplifies the server request logic to always post the contents of the code editor. 
+In order to make the code editor more usable and “feel” like a code editor, I added syntax highlighting with PrismJS \cite{prismjs} and line numbers. 
+Because I could not easily change the the code I import for the code editor, I added line numbers by mapping each line of code to include a span in front of it that contained the line number.
+This implementation also made it easier later to add background colors to the line numbers to indicate message severity--red, orange, and yellow for error, warning, and convention messages respectively. 
+If a line has multiple messages associated with it, the highest severity color will be shown. 
+Coloring the line numbers that have an error associated provides a quick way for users to visually pick out the problematic lines from the rest. 
+It is also an intuitive means to convey to the user that some of the mistakes are more important to address than others, and that the lower severity messages are closer to suggestions than red or orange messages. 
+
+Presently, the application looks like a file drag-and-drop area above a code editor. 
+Since the code editor will expand vertically to fit its contents, it is probable that the user will not be able to access a submit button that is at the top of the page when scrolled to look at a latter portion of their code in the editor, but also not be able to access a submit button that is at the bottom of the page when looking at the file drag-and-drop or the top of the code editor. 
+To address this, I created a navigation bar that is always fixed at the top of the viewport to contain the submit button. 
+This way, the user is always able to locate and access the submit button no matter where they are scrolled to. 
+There are navigation buttons on the bar that indicate possible future areas of expansion for the project, but do not currently lead to any new pages. 
+
+Finally, for the sake of this prototype, I chose to use an accordion component to display the style checking messages. 
+An accordion component refers to a list of headers that can be expanded and collapsed to show or hide a body of related content. 
+This also fits with the nature of our messages, which contain the line number and a shorter error description from Pylint, and the longer rationale and code snippets from Plerr. 
+At this point in the project, I was also aiming to get a working product to test on users as soon as possible, and accordion components were readily available to user in many component libraries. 
+Furthermore, the user needed to be able to reference the message and the code at the same time, meaning the messages would have to be displayed beside or on top of the code editor. 
+Using an accordion component was a quick fix to this need since the entire component can just be placed next to the code editor without much additional styling. 
+However, I knew that I did not want this to be the method for displaying messages in the final product. 
+Within the body of each message, all code snippets also have syntax highlighting applied to convey that the example is in code. 
+
+We now have a fully functional prototype that checks code style that achieves both providing informative code style messages and opportunity to self-correct style in the user's code. 
+We have also achieved full functionality for the front and backends in fig. 2.
+In fig. 3, we can see that users who are lacking in knowledge about code style or CS may expand each message for a more in-depth explanation of the flagged error. 
+With this supplemented error message, observing the error generalized in the “bad” code snippet, and the same code fixed in the “good” code snippet, users are empowered to understand how to fix their mistake. 
+After using the messages to improve their code, users can then resubmit and observe the messages and colored line numbers vanish, or new ones appear, creating a cycle of learning through self-correction with each resubmission. 
+
+\begin{figure}
+\includegraphics[width=8cm]{images/prototype.png}
+\centering
+\vspace{.5cm}
+\caption{UI of the prototype shown with an example code input.}
+\end{figure}
+
+\subsection{User Feedback and UI Improvements}
+In some informal user interviews with the prototype, users generally enjoyed using the app and liked the message contents, but revealed some areas for further improvement.
+For example, users found it cumbersome to deal with the accordion component since in fig. 2, we can see that the messages for lines 3 and 4 are reasonably close to their corresponding code in the editor, but the user would not be able to view the message for line 5 and the code for line 5 in the same viewport. 
+In other words, the final product must use a method for displaying the messages in a way that guarantees it will always appear relative to the position of the corresponding code in the editor. 
+I considered two viable approaches: messages that appear above the concerning line that hover over the editor, or messages that appear inline with the concerning line to the side of the editor. 
+Both of these approaches can be seen in IDE's to display linter messages. 
+I did not like that messages may cover surrounding code in the first approach, and ended up choosing the second. 
+Since the text in the code editor is left aligned, I also moved the messages to appear on the left side of the editor to make it even closer to the corresponding code. 
+By adding a button on the line numbers, I implemented popovers to appear with the message when the user clicks on a colored line number. 
+To prevent the UI from becoming cluttered, only one popover can be open at a time. 
+That is, when there is a popover open and another line number is clicked, the first popover will be closed and the second one will open. 
+It is also possible for multiple messages to correspond to the same line. 
+To address this, I made popovers for lines with multiple messages open into an accordion, which the user can then further expand to view the different messages. 
+Now that most of the messages will be hidden from the user at any given time, I added more features to make clear to the user how to access and view the popovers. 
+Upon submission, the first popover is open by default to make users aware of the messages. 
+Additionally, all popover headers have an arrow on one side pointing to the line number the popover can be toggled by. 
+
+In this process of improving the product, I was also able to conduct a user interview with a CS Professor. 
+They liked the application and imagined they would link it to their students as a tool to run their assignments through before submitting it. 
+The professor also emphasized that it would be up to each student to use the application or not. 
+This feedback reaffirmed that I was heading in the right direction with the application and that it had potential to aid CS classrooms. 
+It also indicated that I should continue to focus on refining the application toward student users rather than adding new features for professors, such as being able to adjust the linter to different grading criteria.
+
+Observing one user correcting their code in the application revealed that the message line numbers become inaccurate when the user removes or adds lines to the contents of the editor. 
+This was a huge oversight that would have hindered any real user from being able to correct their code effectively. 
+I needed a way for the messages to adjust their line numbers when the line of code it is associated with gets moved to a different line number. 
+One way to achieve this would be to track when the numbers of lines in the editor content changes, and adjust the line numbers of each message by the number of added or removed lines. 
+However, this implementation would also require keeping track of where in the content lines are added or removed because only messages after that point would change their line number. 
+Instead, I chose the slightly cruder implementation of re-submitting the form in the background every time the number of lines in the editor content changes. 
+This solution guarantees that all messages will correspond with the correct line number no matter how the user edits the code content, but also introduces instances where the messages may appear to spontaneously change if the user makes larger changes to the code. 
+I determined that this trade-off is worth pursuing this implementation in the short term because it is more rare that a user would make larger changes to the code in this application. 
+
+After adjusting these areas from user feedback, the final version of the UI can be seen in fig. 4.
+
+\begin{figure}
+\includegraphics[width=8cm]{images/final.png}
+\centering
+\vspace{.5cm}
+\caption{Final UI for the application.}
+\end{figure}
+
+\section{Evaluation Metrics}
+To evaluate my project, I conducted structured user interviews with undergraduate CS students. 
+Through my position as a tutor, I was able to find students of varying experience levels and asked them to use my application and fill out a two-part questionnaire. 
+The first part of the questionnaire collected students' number of years learning CS and their understanding level of and importance placed on code style. 
+Relating student responses to the application by experience level is important because results from the initial user interviews with professors indicated that it is more critical for students with less experience to improve their code style than upper-level students. 
+Although this application would ideally be helpful to students at all experience levels, it would be useful to know if it is over or underestimating the CS knowledge of its users. 
+The last two questions use a 5-point Likert scale and were included to gauge general interest and need in an application relating to code style. 
+Information from professors on this was collected prior to building the project, but it could be interesting to quantify student opinion as well. 
+
+Following these three questions, students were then asked to use the application. 
+This required a small amount of initial guidance from me in order for interviewees to place themselves in the context that a real user would be in while using the application.
+For example, since the application is not deployed, interviewees had to use it through my personal machine, which prevented them from using the application on one of their own Python files. 
+All interviews were conducted on a dummy file that can be seen in fig. 3 and 4, and interviewees were then asked to pretend that it was their homework that they are getting graded on for style.
+After 3-5 minutes observing the participant using the application, they were directed to return to the questionnaire to fill out the remaining questions. 
+Participants were asked to rate the application in usefulness correcting code style and improving understanding of code style, also on 5-point Likert scales. 
+These questions will measure success in achieving the main intentions of this project: evaluating and teaching code style. 
+The questionnaire concludes with an open-ended question asking for general thoughts or suggestions on the application. 
+
+Instead of a questionnaire, another metric for evaluating this project could have been quantifying how successful students were in correcting a piece of code using the application. 
+This approach could have been more effective at evaluating the correction portion of the project, it would not address if students learned style in the process. 
+In addition, creating a questionnaire was more straightforward given the time constraints of this project. 
+
+
+\section{Results and Discussion}
+I conducted eight total interviews, where three participants have learned CS for less than a half a year, two for around one year, and three for over two years. 
+For this project, I will consider students with one year or less experience in CS as the primary target audience or lower-level students. 
+Since research generally suggests only using Likert scales as an interval scale if there are at least 11 points on the scale \cite{wu_2017}, we will only treat them as ordinal scales. 
+There were no significant differences between the quantitative answers from lower-level and upper-level students. 
+Most students rated their understanding of code style as average or slightly higher than average, but none rated it as the highest option, “very knowledgeable.”
+This indicates that students generally feel comfortable with code style, but still have more to learn. 
+For the importance of code style when writing code, most students felt that it was more important than neutral, suggesting that there may be interest in products that help with code style. 
+
+In the observation portion of the interviews, six out of the eight participants were immediately drawn to start fixing the code according to the messages, and two needed prompting. 
+This could either have been because there was no incentive to work to correct the code in the interview, unlike in a scenario where a user is inputting their actual homework, or because it was unclear in the UI that the code was displayed in an editor. 
+All students were able to fix at least one error without any intervention using the messages. 
+But when interviewing with some students who had less than half a year of experience with CS, there were other errors that they were still confused about how to fix with the message. 
+For instance, the application might flag that “the variable 'a' does not conform to snake\_case,” but not all students may have the context to know that the actual problem is that 'a' is not an informative variable name. 
+As discussed earlier, this exposes the fundamental limitations of using linters to check code style.
+It was also interesting to see how some students were motivated to keep fixing the code to “make the messages go away,” and others were content to just absorb the message information. 
+
+In the second portion of the questionnaire, all participants responded that the application was average or above in being helpful to both correct and learn style.
+However, students felt more strongly in the application's usefulness in correction, with most responses giving full points, than learning, where most students gave 3 or 4 points (fig. 5). 
+Answers to the final open-ended questions reveal a slight difference in experience between lower and upper-level students. 
+Two participants, both lower-level, mentioned that they would have preferred if the messages were more “guiding” and “clearer.” 
+This could also be an explanation for the discrepancy between perceived usefulness between correcting and learning in the previous questions. 
+Conversely, two participants with over two years of experience specifically commented they saw the application as suited for “beginners.”
+Full questionnaire responses are also available to view.
+
+\begin{figure}
+\includegraphics[width=8cm]{images/correct.png}
+\includegraphics[width=8cm]{images/learn.png}
+\centering
+\vspace{.5cm}
+\caption{Students’ responses after using the application.}
+\end{figure}
+
+Overall, the results of the user interviews indicate that students would be interested in utilizing this application if their professor linked it to them as a tool. 
+Observation of participants interacting with the application also signaled that the UI is intuitive enough for most students to start using the messages to self-correct their code, even without any explicit instructions on the page. 
+However, one limitation of this project is that it is difficult to further improve the contents of the message to be more informative and accurate. 
+Finally, we see that this application succeeds in helping students correct their code style, and has a positive impact on student's knowledge of code style. 
+
+\section{Ethical Considerations}
+One direct impact of this application in the real world is the possible displacement of human workers, specifically graders. 
+As previously mentioned, many undergraduate CS classrooms use human graders to correct style, but this role would be diminished with the introduction of an application that can autonomously correct student's code style. 
+This concern is highlighted by the growing prevalence of machines replacing roles previously held by humans to increase productivity and decrease cost for corporations. 
+Some may argue that engineers are needed to create the products, so the total number of jobs may not actually be different than before. 
+But crucially, these engineering jobs are not a relevant substitute to those actually being displaced--undergraduate students. 
+Recent investigation into the undergraduate population within the US revealed that the majority of students enrolling in postsecondary education are low-income \cite{fountain_2019}. Therefore, the dissolution of jobs immediately available to undergraduate students has a profound impact on the livelihood of the displaced workers. 
+However, I do not believe that the capabilities of this project are advanced enough to replace any human worker, especially since it is currently not designed to output an exact grade. 
+
+To use this application, students will need internet access, a compatible device, and possess digital literacy at a minimum. 
+Access to all three of these requirements are also tied to one's socioeconomic status. 
+Students of low socioeconomic status are already widely regarded as educationally disadvantaged \cite{walpole_2003}. 
+Thus in practice, the benefits of this project would likely be most accessible to those that are already educationally privileged.  
+
+When building the UI, no consideration was given to accessibility for users with visual, motor, mental, or other impairments. 
+As this project has a visual-only UI, an area of future work could be to add tooltips to all components and giving an option for color-blindness-friendly syntax highlighting. 
+
+\printbibliography 
+
+\end{document}
